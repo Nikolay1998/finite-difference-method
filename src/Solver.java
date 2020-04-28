@@ -22,6 +22,7 @@ public class Solver {
     u[0] = zeroLayerCalc(hr);
 
 
+
     Double coef = ht / paramC;
     Integer matrSize = I - 2;
 
@@ -41,7 +42,6 @@ public class Solver {
     }
 
 
-
     r = hr;
     Double b1 = 1.0 + (2 * paramK * ht) / (paramC * hr * hr);
     b[0] = b1 + a[0] / ((paramC * hr * hr / (ht * 6 * paramK)) + 1);
@@ -50,25 +50,27 @@ public class Solver {
       b[i] = b1;
     }
 
-    //b[matrSize] = b1 +
-
+    b[matrSize-1] = b1 + c[matrSize-1] / ((hr * hr * paramC / (ht * 2 * paramK)) + 1);
 
     Double[] shuttleResult;
 
     for (int k = 1; k < K - 1; k++) {
       d[0] = u[k - 1][1] - a[0] * u[k - 1][0] / (1 + (6 * paramK * ht / (hr * hr * paramC)));
-      for (int i = 1; i < I - 2; i++) {
+      for (int i = 1; i < matrSize - 1; i++) {
         d[i] = u[k - 1][i + 1];
       }
+      //System.out.println(u[k-1][I-1-1]);
+      d[matrSize-1] = u[k-1][I-1-1] - c[matrSize-1]/(1+ (2*paramK*ht/(paramC * hr * hr)));
       shuttleResult = shuttle(b, a, c, d);
-      u[k][0] = shuttleResult[0] / ((paramC * hr * hr / (ht * 6 * paramK)) + 1) + u[k - 1][0] / (1 + (6 * paramK * ht / (hr * hr * paramC)));
-      for (int i = 0; i < I - 2; i++) {
+      u[k][0] = (shuttleResult[0] / ((paramC * hr * hr / (ht * 6 * paramK)) + 1)) + (u[k - 1][0] / (1 + (6 * paramK * ht / (hr * hr * paramC))));
+      u[k][I-1] = shuttleResult[matrSize-1]/(1 + (hr*hr*paramC/(ht*2*paramK))) + (u[k-1][I-1] / (1 + 2*paramK*ht/(paramC*hr*hr)));
+      for (int i = 0; i < matrSize; i++) {
         u[k][i + 1] = shuttleResult[i];
       }
     }
 
-    for (int i = 0; i < I - 1; i++) {
-      System.out.println(u[998][i]);
+    for (int i = 0; i < I; i++) {
+      System.out.println(i + ") " + u[998][i]);
     }
 
   }
