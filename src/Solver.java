@@ -25,9 +25,9 @@ public class Solver {
     Double coef = ht / paramC;
     Integer matrSize = I - 2;
 
-    a[0] = null;
-    Double r = 2 * hr;
-    for (int i = 1; i < matrSize; i++) {
+    Double r = 0.0;
+    r += hr;
+    for (int i = 0; i < matrSize; i++) {
       a[i] = (paramK / (r * hr) - paramK / (hr * hr)) * coef;
       r += hr;
     }
@@ -35,41 +35,39 @@ public class Solver {
 
     r = 0.0;
     r += hr;
-    c[matrSize - 1] = null;
-    for (int i = 0; i < matrSize - 1; i++) {
+    for (int i = 0; i < matrSize; i++) {
       c[i] = (-paramK / (r * hr) - paramK / (hr * hr)) * coef;
       r += hr;
     }
 
 
+
     r = hr;
-    Double a0 = (paramK / (2*r * hr) - paramK / (hr * hr)) * coef;
-
-    //System.out.println(a[1]);
-
     Double b1 = 1.0 + (2 * paramK * ht) / (paramC * hr * hr);
-    b[0] = b1 + a0/((paramC*hr*hr/(ht*6*paramK))+1);
+    b[0] = b1 + a[0] / ((paramC * hr * hr / (ht * 6 * paramK)) + 1);
 
     for (int i = 1; i < matrSize; i++) {
       b[i] = b1;
     }
 
+    //b[matrSize] = b1 +
+
 
     Double[] shuttleResult;
 
     for (int k = 1; k < K - 1; k++) {
-      d[0] = u[k - 1][1] - a0*u[k-1][0]/(1+(6*paramK*ht/(hr*hr*paramC)));
+      d[0] = u[k - 1][1] - a[0] * u[k - 1][0] / (1 + (6 * paramK * ht / (hr * hr * paramC)));
       for (int i = 1; i < I - 2; i++) {
         d[i] = u[k - 1][i + 1];
       }
       shuttleResult = shuttle(b, a, c, d);
-      u[k][0] = shuttleResult[0]/((paramC*hr*hr/(ht*6*paramK))+1) + u[k-1][0]/(1+(6*paramK*ht/(hr*hr*paramC)));
+      u[k][0] = shuttleResult[0] / ((paramC * hr * hr / (ht * 6 * paramK)) + 1) + u[k - 1][0] / (1 + (6 * paramK * ht / (hr * hr * paramC)));
       for (int i = 0; i < I - 2; i++) {
         u[k][i + 1] = shuttleResult[i];
       }
     }
 
-    for (int i = 1; i < I - 1; i++) {
+    for (int i = 0; i < I - 1; i++) {
       System.out.println(u[998][i]);
     }
 
